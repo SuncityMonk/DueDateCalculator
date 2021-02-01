@@ -52,7 +52,6 @@ public class DueDateUtilTest {
 
     @Test
     public void testSuccessNotCountingWeekend() {
-
         final LocalDateTime aThursday = LocalDateTime.of(2021, 1, 28, 10, 30, 0);
 
         final LocalDateTime endOfTask = calcDueDateTime(aThursday, 24L);
@@ -63,7 +62,6 @@ public class DueDateUtilTest {
 
     @Test
     public void testSuccessOvertimeToNextDay() {
-
         final LocalDateTime aThursday = LocalDateTime.of(2021, 1, 28, 16, 11, 0);
 
         final LocalDateTime endOfTask = calcDueDateTime(aThursday, 2L);

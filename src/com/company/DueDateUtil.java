@@ -9,6 +9,7 @@ import static java.lang.String.format;
 import static java.time.DayOfWeek.SATURDAY;
 import static java.time.DayOfWeek.SUNDAY;
 import static java.time.LocalTime.of;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_TIME;
 import static java.time.temporal.ChronoUnit.HOURS;
 
@@ -63,7 +64,6 @@ public class DueDateUtil {
 
     private static void validate(LocalDateTime submitDateTime) {
         final LocalTime submitTime = submitDateTime.toLocalTime();
-        final LocalDate submitDate = submitDateTime.toLocalDate();
 
         final StringBuilder errors = new StringBuilder();
         if (END_OF_WORKDAY.isBefore(submitTime) || START_OF_WORKDAY.isAfter(submitTime)) {
@@ -74,11 +74,14 @@ public class DueDateUtil {
                     )
             );
         }
+
+        final LocalDate submitDate = submitDateTime.toLocalDate();
         final DayOfWeek dayOfWeek = submitDate.getDayOfWeek();
         if (SATURDAY.equals(dayOfWeek) || SUNDAY.equals(dayOfWeek)) {
             errors.append(
                     format(
-                            "Submit date must not be a weekend, Failed argument: %s; ",
+                            "Submit date must not be a weekend, Failed arguments: %s, %s; ",
+                            submitDate.format(ISO_LOCAL_DATE),
                             dayOfWeek
                     )
             );
