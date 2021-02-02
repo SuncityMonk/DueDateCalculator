@@ -15,8 +15,8 @@ import static java.time.temporal.ChronoUnit.HOURS;
 
 public class DueDateUtil {
 
-    private static final LocalTime END_OF_WORKDAY = of(17, 0);
     private static final LocalTime START_OF_WORKDAY = of(9, 0);
+    private static final LocalTime END_OF_WORKDAY = of(17, 0);
     private static final long PARAM_WORK_DAY_HOURS = 8;
 
     /**
@@ -28,7 +28,7 @@ public class DueDateUtil {
      * @return the desired time of completion of the task
      * @throws IllegalArgumentException if the time of submission is outside working hours or on a weekend.
      */
-    public static LocalDateTime calcDueDateTime(LocalDateTime submitDateTime, long turnAroundHours) {
+    public static LocalDateTime calculateDueDate(LocalDateTime submitDateTime, long turnAroundHours) {
         validate(submitDateTime);
 
         final LocalTime submitTime = submitDateTime.toLocalTime();
@@ -36,11 +36,11 @@ public class DueDateUtil {
         final LocalTime withPlusHours = submitTime.plusHours(plusHours);
 
 
-        long taskDays = turnAroundHours / PARAM_WORK_DAY_HOURS;
+        long wholeDays = turnAroundHours / PARAM_WORK_DAY_HOURS;
         final LocalTime resultTime;
 
         if (withPlusHours.isAfter(END_OF_WORKDAY)) {
-            taskDays++;
+            wholeDays++;
             final long overhangHours = HOURS.between(END_OF_WORKDAY, withPlusHours);
             resultTime = START_OF_WORKDAY
                     .plusHours(overhangHours)
@@ -50,13 +50,13 @@ public class DueDateUtil {
         }
 
         LocalDate resultDate = submitDateTime.toLocalDate();
-        while (taskDays > 0L) {
-            resultDate = resultDate.plusDays(1);
+        while (wholeDays > 0L) {
+            resultDate = resultDate.plusDays(1L);
             final DayOfWeek dayOfWeek = resultDate.getDayOfWeek();
             if (SATURDAY.equals(dayOfWeek) || SUNDAY.equals(dayOfWeek)) {
                 continue;
             }
-            taskDays--;
+            wholeDays--;
         }
 
         return LocalDateTime.of(resultDate, resultTime);
@@ -66,7 +66,7 @@ public class DueDateUtil {
         final LocalTime submitTime = submitDateTime.toLocalTime();
 
         final StringBuilder errors = new StringBuilder();
-        if (END_OF_WORKDAY.isBefore(submitTime) || START_OF_WORKDAY.isAfter(submitTime)) {
+        if (START_OF_WORKDAY.isAfter(submitTime) || END_OF_WORKDAY.isBefore(submitTime)) {
             errors.append(
                     format(
                             "Submit time must be between 9:00 and 17:00, Failed argument: %s; ",
@@ -87,7 +87,7 @@ public class DueDateUtil {
             );
         }
         final String errorString = errors.toString();
-        if (0 != errorString.length()) {
+        if (!errorString.isEmpty()) {
             throw new IllegalArgumentException(errorString);
         }
     }
