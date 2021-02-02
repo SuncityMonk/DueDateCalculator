@@ -45,6 +45,10 @@ public class DueDateUtil {
             resultTime = START_OF_WORKDAY
                     .plusHours(overhangHours)
                     .withMinute(submitTime.getMinute());
+        } else if (LocalTime.MIDNIGHT.equals(withPlusHours)) {
+            wholeDays++;
+            resultTime = START_OF_WORKDAY
+                    .plusHours(7L);
         } else {
             resultTime = withPlusHours;
         }

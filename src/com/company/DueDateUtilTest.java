@@ -70,4 +70,14 @@ public class DueDateUtilTest {
         assertEquals(endOfTask, nextDay);
     }
 
+    @Test
+    public void testSuccessMidnight() {
+        final LocalDateTime aThursday = LocalDateTime.of(2021, 1, 28, 17, 0, 0);
+
+        final LocalDateTime endOfTask = calculateDueDate(aThursday, 7L);
+        final LocalDateTime nextDay = LocalDateTime.of(2021, 1, 29, 16, 0, 0);
+
+        assertEquals(endOfTask, nextDay);
+    }
+
 }
